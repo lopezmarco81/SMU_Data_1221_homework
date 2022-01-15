@@ -79,3 +79,7 @@ print(summary)
 #Writes the text file
 with open("PyBank_analysis.txt", "w") as file:
     file.write(summary)
+
+#Sources:
+#Maximum value in dictiorary - https://stackoverflow.com/questions/268272/getting-key-with-maximum-value-in-dictionary
+#Dividing each dictionary value by total value - https://stackoverflow.com/questions/30964577/divide-each-python-dictionary-value-by-total-value/30964739

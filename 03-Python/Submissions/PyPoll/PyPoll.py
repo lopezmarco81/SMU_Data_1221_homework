@@ -77,3 +77,8 @@ print(summary)
 #write to file
 with open("PyPoll_Analysis.txt", "w") as file:
       file.write(summary)
+
+#Sources  sitings:
+#Maximum value in dictiorary - https://stackoverflow.com/questions/268272/getting-key-with-maximum-value-in-dictionary
+#Dividing each dictionary value by total value - https://stackoverflow.com/questions/30964577/divide-each-python-dictionary-value-by-total-value/30964739
+#Resolving End of Line (EOL) Syntax Error - http://net-informations.com/python/err/eol.htm
