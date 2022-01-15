@@ -1,9 +1,5 @@
 Python code - PyBank
 
-
-
-
-
 from audioop import avg
 import csv
 
@@ -82,5 +78,5 @@ Greatest Decrease in Profits: Sep-2013 (${min_delta})
 print(summary)
 
 #Writes to file
-with open("analysis.txt", "w") as file:
+with open("PyBank_analysis.txt", "w") as file:
     file.write(summary)
