@@ -54,6 +54,11 @@ print()
 #Getting key with maximum value in dictionary
 max_cand = max(candidate_dict2, key=candidate_dict2.get)
 max_votes = candidate_dict2[max_cand]
+print()
+print(max_cand)
+print()
+print(max_votes)
+print()
 
 #Summary printout
 

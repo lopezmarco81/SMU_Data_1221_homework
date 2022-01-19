@@ -53,6 +53,7 @@ max_delta = max(deltas)
 min_delta = min(deltas)
 print(max_delta)
 print(min_delta)
+print()
 
 #This is for the Max Month
 maxMonth_idx = deltas.index(max_delta)
