@@ -92,3 +92,6 @@ REFERENCES "employees" ("emp_no");
 
 ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
 REFERENCES "departments" ("dept_no");
+
+
+
