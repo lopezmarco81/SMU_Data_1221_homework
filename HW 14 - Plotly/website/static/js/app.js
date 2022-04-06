@@ -68,12 +68,15 @@ function createBarChart(data) {
         x: sample.sample_values.slice(0, 10).reverse(),
         y: sample.otu_ids.map(x => `OTU ${x}`).slice(0, 10).reverse(),
         text: sample.otu_labels.slice(0, 10).reverse(),
-        orientation: 'h'
+        orientation: 'h',
+        color: sample.sample_values
     }
 
     var data1 = [trace1];
     var layout = {
-        "title": "Bar Chart Placeholder"
+        "title": "10 OTUs Found",
+        xaxis: { title: "Sample Value"},
+		yaxis: { title: "OTU ID"}
     }
 
     Plotly.newPlot('bar', data1, layout);
@@ -89,13 +92,16 @@ function createBubbleChart(data) {
         text: sample.otu_labels.slice(0, 10).reverse(),
         mode: 'markers',
         marker: {
-            size: sample.sample_values
+            size: sample.sample_values,
+            color: sample.otu_ids
         }
     }
 
     var data1 = [trace1];
     var layout = {
-        "title": "Bubble Chart Placeholder"
+        "title": "OTU IDs and Value Samples",
+        xaxis: { title: "OTU ID"},
+		yaxis: { title: "Sample Value"}
     }
 
     Plotly.newPlot('bubble', data1, layout);
