@@ -20,6 +20,7 @@ function requestAjax(url) {
             createMetadata(data);
             createBarChart(data);
             createBubbleChart(data);
+            createGaugeChart(data);
         },
         error: function(textStatus, errorThrown) {
             console.log("FAILED to get data");
@@ -37,6 +38,7 @@ function requestD3(url) {
         createMetadata(data);
         createBarChart(data);
         createBubbleChart(data);
+        createGaugeChart(data);
     });
 }
 
@@ -110,3 +112,33 @@ function createBubbleChart(data) {
 
     Plotly.newPlot('bubble', data1, layout);
 }
+
+function createGaugeChart(num) {
+    
+    var data1 = [
+    {
+        domain: { x: [0, 1], y: [0, 1] },
+        value: num,
+        title: {text: "Belly Button Washing Frequency"},
+        type: "indicator",
+        mode: "gauge+number+delta",
+        gauge: {
+            axis: { range: [null, 9]},
+            bar: { color: "#000000" },
+            steps: [
+                { range: [0, 1], color: "#FF5733" },
+                { range: [1, 2], color: "#FF5E3C" },
+                { range: [2, 3], color: "#FF6C4D" },
+                { range: [3, 4], color: "#FF7456" },
+                { range: [4, 5], color: "#FF8166" },
+                { range: [5, 6], color: "#FF8E75" },
+                { range: [6, 7], color: "#FE9A83" },
+                { range: [7, 8], color: "#FFAE9B" },
+                { range: [8, 9], color: "#FFC4B7" },
+                { range: [9, 10], color: "#FFEAE5" },
+            ],
+        }
+    }];
+    Plotly.newPlot('gauge', data1,);
+}
+
