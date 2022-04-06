@@ -69,7 +69,11 @@ function createBarChart(data) {
         y: sample.otu_ids.map(x => `OTU ${x}`).slice(0, 10).reverse(),
         text: sample.otu_labels.slice(0, 10).reverse(),
         orientation: 'h',
-        color: sample.sample_values
+        mode: 'markers',
+        marker: {
+            color: sample.otu_ids
+        }
+
     }
 
     var data1 = [trace1];
