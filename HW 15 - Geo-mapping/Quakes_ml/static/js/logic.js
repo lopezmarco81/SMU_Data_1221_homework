@@ -3,18 +3,17 @@ $(document).ready(function() {
 });
 
 function doWork() {
-    var url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson`;
-    var plates_url = 'static/plates/PB2002_boundaries.json'
-
+    var url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson`;
+    var plates_url = 'static/plates/PB2002_boundaries.json';
     requestAjax(url, plates_url);
 }
 
-function requestD3(url, plate_url) {
+function requestD3(url, plates_url) {
 
     // Perform a GET request to the query URL.
     d3.json(url).then(function(data) {
-        //Nested request to get second data set
-        d3.json(plate_url).then(function(plate_data) {
+        // NESTED request to get the second data set
+        d3.json(plates_url).then(function(plate_data) {
             console.log(data);
             console.log(plate_data);
             createMap(data, plate_data);
@@ -23,16 +22,16 @@ function requestD3(url, plate_url) {
 
 }
 
-function requestAjax(url, plate_url) {
+function requestAjax(url, plates_url) {
     $.ajax({
         type: "GET",
         url: url,
         contentType: "application/json; charset=utf-8",
         success: function(data) {
-             // NESTED AJAX
-             $.ajax({
+            // NESTED AJAX
+            $.ajax({
                 type: "GET",
-                url: plate_url,
+                url: plates_url,
                 contentType: "application/json",
                 dataType: "json",
                 success: function(plate_data) {
@@ -48,7 +47,6 @@ function requestAjax(url, plate_url) {
                     console.log("Request finished");
                 }
             });
-       
         },
         error: function(textStatus, errorThrown) {
             console.log("FAILED to get data");
@@ -61,7 +59,7 @@ function requestAjax(url, plate_url) {
 function onEachFeature(feature, layer) {
     // does this feature have a property named popupContent?
     if (feature.properties) {
-        layer.bindPopup(`<h3>${ feature.properties.title }</h3><hr><p>${new Date(feature.properties.time)}</p >`);
+        layer.bindPopup(`<h3>${ feature.properties.title } at depth: ${feature.geometry.coordinates[2].toFixed(0)}m</h3><hr><p>${new Date(feature.properties.time)}</p >`);
     }
 }
 
@@ -104,10 +102,10 @@ function createMap(data, plate_data) {
         onEachFeature: onEachFeature
     });
 
-    //plate layer
-    var plateLayer = L.geoJSON(plate_data.features,{
+    // plate layer
+    var plateLayer = L.geoJson(plate_data.features, {
         style: {
-            "color": "gold",
+            "color": "yellow",
             "weight": 1,
             "opacity": 0.8
         }
@@ -122,8 +120,8 @@ function createMap(data, plate_data) {
         let location = [earthquake.geometry.coordinates[1], earthquake.geometry.coordinates[0]]
 
         let circle = L.circle(location, {
-            color: circle_color,
-            fillColor: circle_color,
+            color: getColor(earthquake.geometry.coordinates[2]),
+            fillColor: getColor(earthquake.geometry.coordinates[2]),
             fillOpacity: 0.8,
             radius: 50000
         }).bindPopup(`<h3>${ earthquake.properties.title }</h3><hr><p>${new Date(earthquake.properties.time)}</p >`);
@@ -162,7 +160,7 @@ function createMap(data, plate_data) {
     // Be sure to add an overlay Layer that contains the earthquake GeoJSON.
     L.control.layers(baseMaps, overlayMaps).addTo(myMap);
 
-    // add legend
+    //add legend
     // https://gis.stackexchange.com/questions/133630/adding-leaflet-legend
     var legend = L.control({
         position: "bottomright"
@@ -191,6 +189,7 @@ function getRadius(mag) {
 }
 
 function getColor(depth) {
+
     let color = 'red';
 
     if (depth >= 70) {
