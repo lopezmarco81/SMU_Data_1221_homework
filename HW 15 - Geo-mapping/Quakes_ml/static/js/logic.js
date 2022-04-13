@@ -4,28 +4,51 @@ $(document).ready(function() {
 
 function doWork() {
     var url = `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson`;
+    var plates_url = 'static/plates/PB2002_boundaries.json'
 
-    requestAjax(url);
+    requestAjax(url, plates_url);
 }
 
-function requestD3(url) {
+function requestD3(url, plate_url) {
 
     // Perform a GET request to the query URL.
     d3.json(url).then(function(data) {
-        console.log(data);
-        createMap(data);
+        //Nested request to get second data set
+        d3.json(plate_url).then(function(plate_data) {
+            console.log(data);
+            console.log(plate_data);
+            createMap(data, plate_data);
+        });
     });
 
 }
 
-function requestAjax(url) {
+function requestAjax(url, plate_url) {
     $.ajax({
         type: "GET",
         url: url,
         contentType: "application/json; charset=utf-8",
         success: function(data) {
-            console.log(data);
-            createMap(data);
+             // NESTED AJAX
+             $.ajax({
+                type: "GET",
+                url: plate_url,
+                contentType: "application/json",
+                dataType: "json",
+                success: function(plate_data) {
+                    console.log(data);
+                    console.log(plate_data);
+                    createMap(data, plate_data);
+
+                },
+                error: function(data) {
+                    console.log("YOU BROKE IT!!");
+                },
+                complete: function(data) {
+                    console.log("Request finished");
+                }
+            });
+       
         },
         error: function(textStatus, errorThrown) {
             console.log("FAILED to get data");
@@ -45,7 +68,7 @@ function onEachFeature(feature, layer) {
 
 // 3.
 // createMap() takes the earthquake data and incorporates it into the visualization:
-function createMap(data) {
+function createMap(data, plate_data) {
 
     // apply the filter (if necessary)
     var earthquakes = data.features
@@ -81,6 +104,15 @@ function createMap(data) {
         onEachFeature: onEachFeature
     });
 
+    //plate layer
+    var plateLayer = L.geoJSON(plate_data.features,{
+        style: {
+            "color": "gold",
+            "weight": 1,
+            "opacity": 0.8
+        }
+    });
+
     // A SECOND OVERLAY OBJECT
     var circles = [];
     for (let i = 0; i < earthquakes.length; i++) {
@@ -112,7 +144,8 @@ function createMap(data) {
     // Overlays that can be toggled on or off
     var overlayMaps = {
         Markers: earthquakeLayer,
-        Circles: circleLayer
+        Circles: circleLayer,
+        Plates: plateLayer
     };
 
     // Create a new map.
@@ -122,10 +155,53 @@ function createMap(data) {
             37.09, -95.71
         ],
         zoom: 5,
-        layers: [dark_layer, circleLayer]
+        layers: [dark_layer, circleLayer, plateLayer]
     });
 
     // Create a layer control that contains our baseMaps.
     // Be sure to add an overlay Layer that contains the earthquake GeoJSON.
     L.control.layers(baseMaps, overlayMaps).addTo(myMap);
+
+    // add legend
+    // https://gis.stackexchange.com/questions/133630/adding-leaflet-legend
+    var legend = L.control({
+        position: "bottomright"
+    });
+
+    legend.onAdd = function() {
+        var div = L.DomUtil.create('div', 'info legend');
+        var labels = ["<10", "10-30", "30-70", "70+"];
+        var colors = ["green", "yellow", "orange", "red"];
+
+        for (let i = 0; i < labels.length; i++) {
+            let label = labels[i];
+            let color = colors[i];
+
+            let html = `<i style='background:${color}'></i>${label}<br>`;
+            div.innerHTML += html;
+        }
+        return div;
+    }
+
+    legend.addTo(myMap);
+}
+
+function getRadius(mag) {
+    return mag * 10000
+}
+
+function getColor(depth) {
+    let color = 'red';
+
+    if (depth >= 70) {
+        color = "red";
+    } else if (depth >= 30) {
+        color = "orange";
+    } else if (depth >= 10) {
+        color = "yellow";
+    } else {
+        color = 'green';
+    }
+
+    return (color);
 }
