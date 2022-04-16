@@ -105,8 +105,8 @@ function createMap(data, plate_data) {
     // plate layer
     var plateLayer = L.geoJson(plate_data.features, {
         style: {
-            "color": "yellow",
-            "weight": 1,
+            "color": "chocolate",
+            "weight": 1.5,
             "opacity": 0.8
         }
     });
